@@ -1,0 +1,29 @@
+name: Verify mathematics and build PDF
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Exact arithmetic verification
+        run: make verify
+      - name: Install LaTeX
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y latexmk texlive-latex-extra lmodern
+      - name: Compile and check PDF
+        run: make pdf
+      - name: Upload compiled manuscript
+        uses: actions/upload-artifact@v4
+        with:
+          name: optimal-coupon-packages-pdf
+          path: paper/optimal_coupon_packages.pdf
+          if-no-files-found: error

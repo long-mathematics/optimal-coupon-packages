@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "Please cite the manuscript if you use these results or verification programs."
+title: "Optimal coupon packages and stochastic improvement of uniform group drawings"
+authors:
+  - family-names: Long
+    given-names: Christopher D.
+type: manuscript
+version: 0.1.0
+date-released: 2026-11-17
+repository-code: "https://github.com/long-mathematics/optimal-coupon-packages"
+license: MIT
+keywords:
+  - coupon collector
+  - group drawings
+  - stochastic order
+  - Finner inequality
+  - Johnson scheme

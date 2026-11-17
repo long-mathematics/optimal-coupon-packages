@@ -1,0 +1,17 @@
+PASS: all strengthening checks use exact rational or integer arithmetic
+  n=2..8, all 1<=s<n and admissible d; draw counts through 8
+  paired-ray adjacent-amplitude CDF comparisons: 1350
+  ray amplitudes: 0, 1/3, 2/3, 1
+  geometric-tail checks for seeded at-most-size laws: 896
+  4 seeded laws per (n,s); empty and smaller packages permitted
+  complementary-partition tail/mean equalities: 108
+  first-feasible-draw comparisons/partition equalities: 60
+  mean-Hessian blocks: 50; exact coordinate checks: 1262
+  CDF-Hessian exact coordinate checks: 8182
+  exact tangent-trace/multiplicity identities: 28
+  (8,4) mean-Hessian blocks (d, eigenvalue, multiplicity):
+    1: 224.190729359; multiplicity 7
+    2: -11.839806099; multiplicity 20
+    3: 2.907680655; multiplicity 28
+    4: -2.088222849; multiplicity 14
+Elapsed: 1.541 seconds

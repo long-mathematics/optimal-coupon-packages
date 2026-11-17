@@ -1,0 +1,873 @@
+\documentclass[11pt]{article}
+\usepackage[letterpaper,margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{microtype}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\hypersetup{pdftitle={Optimal coupon packages and stochastic improvement of uniform group drawings},pdfauthor={Christopher D. Long}}
+\numberwithin{equation}{section}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{example}[theorem]{Example}
+\newcommand{\Pp}{\mathbb P}
+\newcommand{\E}{\mathbb E}
+\newcommand{\1}{\mathbf 1}
+\newcommand{\supp}{\operatorname{supp}}
+\newcommand{\Poi}{\operatorname{Poi}}
+\newcommand{\Geom}{\operatorname{Geom}}
+\newcommand{\st}{\leq_{\mathrm{st}}}
+\newcommand{\U}{\mathcal U}
+\newcommand{\D}{\mathcal D}
+\newcommand{\hreal}{\mathsf H}
+\DeclareMathOperator{\Var}{Var}
+\setlength{\emergencystretch}{2em}
+
+\title{Optimal coupon packages and stochastic improvement of uniform group drawings}
+\author{Christopher D. Long}
+\date{November 17, 2026\\[3pt]\small Research draft, audited revision}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+A collector repeatedly draws independent packages of at most $s$ coupons from a universe of $n$ coupons. When $s\mid n$, we prove that the uniform law on the blocks of an $s$-set partition uniquely minimizes the expected completion time, resolving the Fang--Chang optimal-package conjecture. The partition law is stochastically optimal in Poissonized time, also for every common collection multiplicity. The proof combines independent package clocks, Finner's inequality, and strict concavity; an incidence-class tail argument characterizes equality. The same bound proves the lower-bound conjecture of Grunbaum and Yaakobi without their regularity assumptions. A separate elementary discrete-time bound identifies the unique optimal complementary-partition laws whenever $s<n$ and $n-s\mid n$.
+
+For fixed-size packages, a four-coupon perturbation preserves singleton marginals and strictly increases the completion probability at every feasible draw count. This gives an alternative proof and a stochastic strengthening of Schilling's conjecture, previously proved in expectation by Berend and Sher. More generally, perturbations formed from $d$ disjoint pairs preserve all inclusion probabilities below order $d$ and are strictly stochastically monotone in their absolute amplitude, with the direction determined by the parity of $d$. Their inclusion--exclusion coefficients count covering families. Combined with the Johnson-scheme decomposition, this yields the complete alternating signature of the expectation Hessian at the uniform law. The general fixed-draw partition comparison is left as a conjecture; its first feasible draw count follows from the Poissonized bound.
+\end{abstract}
+
+\section{Introduction and principal results}
+
+Let $[n]=\{1,\ldots,n\}$, and let $\mu$ be a probability distribution on subsets of $[n]$. Packages $S_1,S_2,\ldots$ are independent with common law $\mu$. Their completion time is
+\[
+ T_\mu=\inf\biggl\{m\geq 0:\bigcup_{j=1}^m S_j=[n]\biggr\},
+\]
+with $\inf\varnothing=\infty$. Throughout the optimization problem, $|S_j|\leq s$ almost surely, where $1\leq s\leq n$. Empty packages are allowed. The law is fixed in advance: no adaptive or history-dependent choice of packages is permitted.
+
+Write $H_q=\sum_{j=1}^q j^{-1}$ for an integer $q\geq1$. If $n=qs$, a \emph{partition law} $\D_{n,s}$ assigns probability $1/q$ to each block of a partition of $[n]$ into $q$ sets of size $s$. Its completion time is the ordinary uniform $q$-coupon collection time, so
+\begin{equation}\label{eq:partition-mean}
+ \E T_{\D_{n,s}}=qH_q.
+\end{equation}
+
+Fang and Chang proved both fixed-draw stochastic optimality and uniqueness of the mean minimizer when $n=2s$, and proposed the partition optimum for general $s\mid n$ \cite[Theorem~2 and Corollary~3]{FangChang}. The general divisible case is still stated as conjectural in the introduction of Berend and Sher \cite{BerendSher}. The first result below establishes it. Here $\tau_\mu$ denotes completion time when packages arrive at the points of an independent rate-one Poisson process.
+
+There is an attribution discrepancy worth recording. Grunbaum and Yaakobi \cite[Remark~2]{GrunbaumYaakobi} refer to the divisible-case lower bound as a general result, citing Berend and Sher; the cited work instead describes general decomposition optimality as a conjecture. Our proof is independent of that attribution. Appendix~\ref{app:cover} separately rules out a stronger minimum-cover comparison.
+
+\begin{theorem}[Optimal partition packages]\label{thm:main-partition}
+Suppose that $n=qs$, where $q,s\geq1$ are integers. For every package law supported on sets of size at most $s$,
+\begin{equation}\label{eq:main-cdf}
+ \Pp(\tau_\mu\leq t)\leq (1-e^{-t/q})^q,
+ \qquad t\geq0,
+\end{equation}
+and consequently
+\begin{equation}\label{eq:main-mean}
+ \E T_\mu\geq qH_q.
+\end{equation}
+Equality in \eqref{eq:main-mean} holds if and only if $\mu$ is a partition law. In particular,
+$\tau_{\D_{n,s}}\st\tau_\mu$.
+\end{theorem}
+
+This is a statement about Poissonized stochastic order and about the unpoissonized expectation. A fixed-draw stochastic comparison between an arbitrary law and the partition law does not follow merely by removing the Poissonization. We maintain this distinction throughout.
+
+A second problem concerns the uniform law $\U_{n,s}$ on all $N=\binom ns$ sets of size $s$. Schilling proved its optimality when $s=n-1$ and conjectured its failure to minimize the mean in every case $2\leq s\leq n-2$ \cite{Schilling}. Berend and Sher proved this conjecture by constructing nonuniform competitors with smaller means \cite{BerendSher}. Their preprint first appeared in September 2025; the journal article was published online on May 27, 2026. Our next theorem supplies a different proof and strengthens the comparison to discrete-time stochastic order.
+
+For $i\in[n]$, write $x_i(A)=\1_{\{i\in A\}}$.
+
+\begin{theorem}[A marginal-preserving stochastic improvement]\label{thm:main-schilling}
+Let $2\leq s\leq n-2$ and, for $|A|=s$, define
+\begin{equation}\label{eq:four-switch}
+ \mu_\theta(A)=\frac{1+\theta\bigl(x_1(A)-x_2(A)\bigr)
+                         \bigl(x_3(A)-x_4(A)\bigr)}{\binom ns},
+ \qquad -1\leq\theta\leq1.
+\end{equation}
+This is a probability law satisfying $\Pp_{\mu_\theta}(i\in S)=s/n$ for every $i$. If $0<|\theta|\leq1$, then
+\begin{equation}\label{eq:schilling-fixed}
+ \Pp(T_{\mu_\theta}\leq m)>
+ \Pp(T_{\U_{n,s}}\leq m)
+ \quad\text{for every integer }m\geq\lceil n/s\rceil.
+\end{equation}
+For $m<\lceil n/s\rceil$, both probabilities vanish. Thus
+$T_{\mu_\theta}\st T_{\U_{n,s}}$, with distinct distributions, and
+$\E T_{\mu_\theta}<\E T_{\U_{n,s}}$.
+\end{theorem}
+
+The two theorems use complementary mechanisms. Finner's product-space inequality \cite{Finner} controls coverage globally after Poissonization. Theorem~\ref{thm:main-schilling} instead comes from a signed perturbation whose inclusion--exclusion coefficients are nonnegative covering counts. The latter method also yields an alternating family of higher-order perturbations and the full Johnson-scheme signature of the uniform-law Hessian (Section~\ref{sec:hessian}). Section~\ref{sec:discrete} gives a discrete geometric tail bound and characterizes its complementary-partition equality cases. The construction is the divisible-complement specialization of Berend and Sher's complementary decomposition distribution \cite[Section~2]{BerendSher}; here it is shown to be globally stochastically optimal.
+
+\section{Poissonization, the universal bound, and equality}\label{sec:poisson}
+
+\subsection{Independent package clocks}
+
+Let $E_1,E_2,\ldots$ be independent rate-one exponential variables, independent of the package sequence. Then
+\begin{equation}\label{eq:clock-sum}
+ \tau_\mu=\sum_{j=1}^{T_\mu} E_j.
+\end{equation}
+In particular, conditioning on $T_\mu$ and using monotone convergence gives
+\begin{equation}\label{eq:mean-poissonization}
+ \E\tau_\mu=\E T_\mu,
+\end{equation}
+including infinite expectations. Equivalently, at each fixed time $t$, the counts
+\[
+ Z_A(t)=\#\{\text{arrivals of package }A\text{ by time }t\},
+ \qquad A\in\supp\mu,
+\]
+are independent Poisson variables with means $t\mu(A)$. The collection is finite because the coupon universe is finite.
+
+Set
+\begin{equation}\label{eq:marginal}
+ p_i=\Pp_\mu(i\in S)=\sum_{A\ni i}\mu(A).
+\end{equation}
+Coupon $i$ has been seen by time $t$ precisely when $\sum_{A\ni i}Z_A(t)>0$, so its coverage probability is $1-e^{-tp_i}$. Also,
+\begin{equation}\label{eq:budget}
+ \sum_{i=1}^n p_i=\E_\mu |S|\leq s.
+\end{equation}
+If some $p_i=0$, completion is impossible. Otherwise all completion-time moments are finite, for example by the union bound
+$\Pp(T_\mu>m)\leq\sum_i(1-p_i)^m$.
+
+\subsection{The product-space inequality}
+
+We record the precise form of Finner's inequality that is needed and include its elementary proof. Its use is justified by the independent \emph{package clocks}, not by a bounded-degree dependency graph on the coupons.
+
+\begin{lemma}[Finner's inequality]\label{lem:finner}
+Let $X_1,\ldots,X_M$ be independent. For each $i$, let $f_i\geq0$ depend only on coordinates in $I_i\subseteq[M]$. Suppose that $0<w_i\leq1$ and
+\[
+ \sum_{i:j\in I_i}w_i\leq1\qquad(j\in[M]).
+\]
+Then
+\begin{equation}\label{eq:finner}
+ \E\prod_i f_i\leq\prod_i\bigl(\E f_i^{1/w_i}\bigr)^{w_i}.
+\end{equation}
+In particular, if every coordinate occurs in at most $s$ functions, one may take $w_i=1/s$.
+\end{lemma}
+
+\begin{proof}
+It suffices first to consider bounded functions. Integrate in $X_M$, holding the other coordinates fixed. Apply ordinary H\"older to the functions depending on $X_M$, with exponents $1/w_i$; a constant function fills any unused exponent weight. Replace each such $f_i$ by
+\[
+ g_i=\bigl(\E_{X_M}f_i^{1/w_i}\bigr)^{w_i}
+\]
+and leave the remaining functions unchanged. The coordinate-incidence conditions persist on $M-1$ coordinates. Induction gives \eqref{eq:finner}, because
+$\E g_i^{1/w_i}=\E f_i^{1/w_i}$. The case $M=0$ is immediate. Truncation and monotone convergence remove boundedness.
+\end{proof}
+
+For $x>0$ define the real harmonic interpolation
+\begin{equation}\label{eq:real-harmonic}
+ \hreal(x)=\int_0^1\frac{1-(1-u)^x}{u}\,du.
+\end{equation}
+It agrees with $H_q$ at positive integers $q$. Its integral definition will suffice throughout.
+
+\begin{theorem}[Universal Poissonized bound]\label{thm:universal}
+For $1\leq s\leq n$, put $q=n/s$, not necessarily an integer. Every admissible package law satisfies
+\begin{equation}\label{eq:chain}
+ \Pp(\tau_\mu\leq t)
+ \leq\prod_{i=1}^n(1-e^{-tp_i})^{1/s}
+ \leq(1-e^{-t/q})^q,
+ \qquad t\geq0.
+\end{equation}
+Consequently,
+\begin{equation}\label{eq:real-mean}
+ \E T_\mu\geq q\hreal(q).
+\end{equation}
+Equality in \eqref{eq:real-mean} is possible if and only if $q$ is an integer and $\mu$ is a partition law.
+\end{theorem}
+
+\begin{proof}[Proof of the inequalities]
+If any $p_i=0$, the assertions are immediate. Otherwise fix $t>0$. Apply Lemma~\ref{lem:finner} to the indicators of the $n$ coupon-coverage events, with coordinates $Z_A(t)$ and weights $1/s$. Coordinate $Z_A(t)$ occurs in exactly $|A|\leq s$ indicators. This proves the first inequality in \eqref{eq:chain}.
+
+The function $f_t(x)=\log(1-e^{-tx})$ on $(0,\infty)$ is strictly increasing and strictly concave, since
+\[
+ f_t'(x)=\frac{t}{e^{tx}-1}>0,
+ \qquad
+ f_t''(x)=-\frac{t^2e^{tx}}{(e^{tx}-1)^2}<0.
+\]
+Jensen's inequality and \eqref{eq:budget} give
+\[
+ \frac1s\sum_i f_t(p_i)
+ \leq \frac ns f_t\biggl(\frac1n\sum_i p_i\biggr)
+ \leq q f_t(1/q).
+\]
+Exponentiating proves \eqref{eq:chain}. The case $t=0$ is immediate. Finally,
+\begin{align*}
+ \E T_\mu=\E\tau_\mu
+ &\geq\int_0^\infty\bigl[1-(1-e^{-t/q})^q\bigr]dt\\
+ &=q\int_0^1\frac{1-(1-u)^q}{u}\,du
+ =q\hreal(q).
+\end{align*}
+\end{proof}
+
+\subsection{Equality without equality conditions for Finner's inequality}\label{subsec:equality}
+
+The strict Jensen step forces balanced marginals, but balanced marginals alone do not characterize the optimum. The following argument supplies the additional rigidity.
+
+\begin{proof}[Proof of the equality statement in Theorem~\ref{thm:universal}]
+Suppose equality holds in \eqref{eq:real-mean}. The difference between the final bound in \eqref{eq:chain} and the actual completion CDF is nonnegative and continuous. Its integral is zero, so it vanishes at every $t\geq0$. Equality throughout the Jensen chain at any $t>0$ therefore gives
+\begin{equation}\label{eq:equality-balance}
+ p_i=p:=s/n\quad\text{for all }i,
+ \qquad |S|=s\quad\mu\text{-almost surely}.
+\end{equation}
+
+Declare $i\sim j$ when every package in $\supp\mu$ contains either both $i,j$ or neither. Let $C_1,\ldots,C_k$ be the resulting incidence classes. Each class is contained in some supported package, so $|C_a|\leq s$. Every supported package is a union of complete classes.
+
+Let $U_a(t)$ be the event that class $C_a$ has not appeared by time $t$. Then
+$\Pp(U_a(t))=e^{-pt}$. For two distinct classes choose $i\in C_a$, $j\in C_b$. Equal marginals and inequivalent incidences imply
+\[
+ r_{ab}:=\Pp_\mu(i\in S\text{ or }j\in S)>p,
+ \qquad
+ \Pp(U_a(t)\cap U_b(t))=e^{-r_{ab}t}.
+\]
+Indeed, equal marginals give equal probabilities for the two one-sided differences, and their sum is positive. Since the number of classes is finite, the first two Bonferroni bounds imply
+\begin{equation}\label{eq:class-tail}
+ \Pp(\tau_\mu>t)=k e^{-pt}+o(e^{-pt})
+ \qquad(t\longrightarrow\infty).
+\end{equation}
+On the other hand, equality in \eqref{eq:chain} gives
+\[
+ \Pp(\tau_\mu>t)=1-(1-e^{-pt})^q
+ =q e^{-pt}+O(e^{-2pt}).
+\]
+Thus $k=q$. In particular $q$ is an integer. The $q$ classes partition $n=qs$ coupons and each has size at most $s$, so all have size $s$. A supported package has size $s$ and is a union of classes; hence it is exactly one class. Its probability is the common coupon marginal $p=1/q$. Therefore $\mu$ is a partition law.
+
+Conversely, under a partition law the block clocks are independent rate-$1/q$ Poisson processes. Their first-arrival maximum has CDF $(1-e^{-t/q})^q$, so equality holds.
+\end{proof}
+
+Theorem~\ref{thm:main-partition} now follows. Notice that no classification of the equality cases of Finner's inequality was required.
+
+\begin{corollary}[The Grunbaum--Yaakobi lower bound]\label{cor:GY}
+For any iid package law supported on subsets of size at most $s$,
+\begin{equation}\label{eq:floor-bound}
+ \E T_\mu\geq \frac ns\hreal(n/s)
+ \geq \left\lfloor\frac ns\right\rfloor H_{\lfloor n/s\rfloor}.
+\end{equation}
+The comparison with the final bound is strict when $s\nmid n$. When $s\mid n$, equality holds exactly for the partition laws. In particular, Conjecture~3 of Grunbaum and Yaakobi \cite{GrunbaumYaakobi}, posed for uniform sampling from equal-size hyperedges with equal vertex degrees, holds without either uniformity or equal-degree assumptions.
+\end{corollary}
+
+\begin{proof}
+The integrand in \eqref{eq:real-harmonic} is strictly increasing in $x$ for $0<u<1$. Thus $\hreal(x)>0$ and $x\hreal(x)$ is strictly increasing for $x>0$. Apply Theorem~\ref{thm:universal} and compare $x=n/s$ with $\lfloor x\rfloor$. Its equality characterization proves the final assertion.
+\end{proof}
+
+\subsection{Consequences and the limit of de-Poissonization}
+
+\begin{corollary}[Generating functions and rising factorial moments]\label{cor:transforms}
+Assume $n=qs$. For $0<z<1$,
+\begin{equation}\label{eq:pgf}
+ \E z^{T_\mu}\leq\E z^{T_{\D_{n,s}}}.
+\end{equation}
+For each integer $r\geq1$,
+\begin{equation}\label{eq:rising}
+ \E\bigl[T_\mu(T_\mu+1)\cdots(T_\mu+r-1)\bigr]
+ \geq
+ \E\bigl[T_{\D_{n,s}}(T_{\D_{n,s}}+1)\cdots
+              (T_{\D_{n,s}}+r-1)\bigr].
+\end{equation}
+These inequalities allow infinite values, with $z^\infty=0$.
+\end{corollary}
+
+\begin{proof}
+For $\lambda>0$, \eqref{eq:clock-sum} gives
+$\E e^{-\lambda\tau_\mu}=\E(1+\lambda)^{-T_\mu}$.
+Use the decreasing function $e^{-\lambda t}$ in the stochastic comparison and set $z=(1+\lambda)^{-1}$. For \eqref{eq:rising}, condition on $T_\mu=m$: the $r$th moment of the sum of $m$ independent rate-one exponentials is $m(m+1)\cdots(m+r-1)$. Apply the Poissonized stochastic order to $t^r$.
+\end{proof}
+
+Neither \eqref{eq:pgf} nor \eqref{eq:rising} is asserted to imply fixed-draw stochastic dominance or variance minimization. In particular,
+\[
+ \Pp(\tau_\mu\leq t)
+ =e^{-t}\sum_{m\geq0}\frac{t^m}{m!}\Pp(T_\mu\leq m)
+\]
+is a positive smoothing transform; an inequality between the transforms does not in general give a coefficientwise inequality.
+
+The same proof also yields the support-sensitive estimate
+\begin{equation}\label{eq:weighted}
+ \Pp(\tau_\mu\leq t)
+ \leq\prod_{i:w_i>0}(1-e^{-tp_i})^{w_i}
+\end{equation}
+for any $w_i\geq0$ satisfying $\sum_{i\in A}w_i\leq1$ for every supported package $A$. If a positively weighted coupon has zero marginal, the bound is immediate. Otherwise the support constraints imply $w_i\leq1$ on the positive-weight indices. Discard the zero-weight coverage requirements and apply Lemma~\ref{lem:finner} to the remainder. Inequality~\eqref{eq:chain} is the choice $w_i=1/s$.
+
+\section{Discrete-time bounds and complementary partitions}\label{sec:discrete}
+
+\subsection{A universal geometric lower tail}
+
+The following first-moment argument extends the mechanism used by Fang and Chang for $n=2s$ \cite[Lemma~1 and Theorem~2]{FangChang}. The hypothesis $s<n$ is essential.
+
+\begin{theorem}[Geometric tail bound]\label{thm:geometric}
+Let $1\leq s<n$, and put $q=n/s$. Every iid package law with $|S|\leq s$ satisfies
+\begin{equation}\label{eq:geometric-tail}
+ \Pp(T_\mu>m)\geq \left(1-\frac sn\right)^{m-1}
+ \qquad(m\geq1),
+\end{equation}
+and therefore
+\begin{equation}\label{eq:geometric-mean}
+ \E T_\mu\geq 1+q.
+\end{equation}
+Equality in \eqref{eq:geometric-mean} holds if and only if $h=n-s$ divides $n$ and $\mu$ is uniform on the complements of the blocks of a partition of $[n]$ into $h$-sets. Such a law attains equality in \eqref{eq:geometric-tail} for every $m\geq1$.
+\end{theorem}
+
+\begin{proof}[Proof of the inequalities]
+First suppose every package has exactly $s$ coupons. Let $U_m$ count the coupons missing after $m$ draws. For $m\geq1$ the first package guarantees $0\leq U_m\leq n-s$, so
+\[
+ \Pp(T_\mu>m)\geq\frac{\E U_m}{n-s}
+ =\frac1{n-s}\sum_{i=1}^n(1-p_i)^m
+ \geq\frac n{n-s}\left(1-\frac sn\right)^m.
+\]
+The last step is Jensen's inequality, using $\sum_i p_i=s$. This is \eqref{eq:geometric-tail}. Since $\Pp(T_\mu>0)=1$, summing gives
+\[
+ \E T_\mu\geq1+\sum_{m\geq1}(1-s/n)^{m-1}=1+n/s.
+\]
+For a law on sets of size at most $s$, fix a deterministic enlargement $A\mapsto\widehat A\supseteq A$ with $|\widehat A|=s$. The enlarged draws remain iid and their completion time satisfies $T_{\widehat\mu}\leq T_\mu$ pathwise. Apply the exact-size inequalities to $\widehat\mu$.
+\end{proof}
+
+\begin{proof}[Proof of equality and rigidity]
+Suppose first that packages have exactly $s$ coupons and equality holds in \eqref{eq:geometric-mean}. Every termwise tail difference in the preceding proof is nonnegative, hence equality holds at $m=2$. Strict Jensen equality gives $p_i=s/n$ for every $i$. Equality in $\E U_2\leq h\Pp(U_2>0)$ gives $U_2\in\{0,h\}$ almost surely.
+
+The complement of every supported package has size $h$. For two supported packages $A,B$, the event that they are the first two draws has positive probability and
+\[
+ U_2=|A^c\cap B^c|\in\{0,h\}.
+\]
+Their complements are therefore identical or disjoint. The distinct complements $H_1,\ldots,H_k$ are pairwise disjoint and cover $[n]$, because every coupon has omission probability $h/n>0$. Thus $kh=n$. A coupon in $H_j$ is omitted exactly when $[n]\setminus H_j$ is drawn, so the probability of that package is $h/n=1/k$.
+
+Now allow packages of size at most $s$ and use the deterministic enlargement above. Equality of the original mean forces equality of the enlarged mean, so the enlarged law is the just-described complementary-partition law. If a smaller supported package $B$ existed, let $\widehat B=[n]\setminus H_j$ and choose $i\in\widehat B\setminus B$. Then $i\in H_k$ for some $k\ne j$. With positive probability the first original draw is $B$ and the second enlarged draw is $[n]\setminus H_k$. On this event the enlarged collection is complete after two draws, while the original collection still lacks $i$. This contradicts equality of the means under the pathwise coupling. Consequently all original packages have size $s$, and the exact-size characterization applies.
+
+Conversely, under a uniform law on the complements of $k=n/h$ disjoint $h$-blocks, any two distinct packages cover $[n]$. Collection is incomplete after $m\geq1$ draws exactly when all $m$ draws agree, with probability
+\[
+ k(1/k)^m=k^{1-m}=(1-s/n)^{m-1}.
+\]
+This proves attainment and finishes the proof.
+\end{proof}
+
+\begin{corollary}[Complementary-partition optimum]\label{cor:complement}
+If $1\leq s<n$ and $n-s\mid n$, a uniform complementary-partition law $\mathcal C_{n,s}$ satisfies
+\[
+ T_{\mathcal C_{n,s}}\st T_\mu
+\]
+for every iid law on sets of size at most $s$. It uniquely minimizes the mean, up to relabeling, and its mean is $1+n/s$.
+\end{corollary}
+
+For $n=2s$, the complementary-partition and partition laws coincide. Hence this recovers the fixed-draw theorem of Fang and Chang \cite[Theorem~2]{FangChang}, not a new first proof of that case. For $s=n-1$, it recovers Schilling's endpoint optimum \cite{Schilling} and establishes uniqueness in the larger at-most-size class. Berend and Sher already define the complementary construction and compute its mean \cite[Section~2, equation~(2)]{BerendSher}; the universal comparison above supplies its optimality when $n-s\mid n$.
+
+\begin{corollary}[Combined mean bound]\label{cor:combined}
+For $1\leq s<n$ and $q=n/s$,
+\begin{equation}\label{eq:combined}
+ \E T_\mu\geq\max\{1+q,\ q\hreal(q)\}.
+\end{equation}
+\end{corollary}
+
+This improves the trivial integer bound $T_\mu\geq\lceil q\rceil$. The extra term is useful for small nonintegral $q$: when $n=3,s=2$, the Poissonized bound is $(3/2)\hreal(3/2)=4-3\log2<2$, whereas \eqref{eq:geometric-mean} gives the sharp value $5/2$. If $s\nmid n$ then the $q\hreal(q)$ component is strict, but the combined bound can still be attained through its $1+q$ component.
+
+\subsection{The earliest feasible draw count}
+
+\begin{proposition}[First feasible draw]\label{prop:first-draw}
+If $n=qs$ with $q\geq1$ an integer, then
+\begin{equation}\label{eq:first-draw}
+ \Pp(T_\mu\leq q)\leq\frac{q!}{q^q}
+\end{equation}
+for every law on sets of size at most $s$. Equivalently, if $\Pi_{n,s}$ denotes the set of partitions of $[n]$ into $q$ blocks of size $s$, then
+\begin{equation}\label{eq:partition-lagrangian}
+ \sum_{\mathcal P\in\Pi_{n,s}}\prod_{A\in\mathcal P}\mu(A)
+ \leq q^{-q}.
+\end{equation}
+The partition law attains both bounds.
+\end{proposition}
+
+\begin{proof}
+Fewer than $q$ packages cannot cover $[n]$. Thus, as $t\downarrow0$,
+\[
+ \Pp(\tau_\mu\leq t)
+ =e^{-t}\sum_{m=q}^{\infty}\frac{t^m}{m!}\Pp(T_\mu\leq m)
+ =\frac{\Pp(T_\mu\leq q)}{q!}t^q+O(t^{q+1}).
+\]
+Theorem~\ref{thm:universal} bounds this by
+$(1-e^{-t/q})^q=q^{-q}t^q+O(t^{q+1})$.
+Comparing leading coefficients proves \eqref{eq:first-draw}. Coverage with exactly $q$ draws forces all packages to have size $s$ and to be pairwise disjoint. Every unordered partition has $q!$ orderings, giving \eqref{eq:partition-lagrangian}.
+\end{proof}
+
+This argument controls the first potentially nonzero coefficient. It does not extract inequalities for later coefficients from a Poissonized comparison.
+
+\section{A common collection multiplicity}\label{sec:multiplicity}
+
+Let $T_\mu^{(r)}$ be the number of packages required for every coupon to appear at least $r$ times, where $r\geq1$ is an integer, and let $\tau_\mu^{(r)}$ be its rate-one Poissonization. A package contains at most one copy of each coupon. Define
+\[
+ G_r(x)=\Pp(\Poi(x)\geq r)
+       =1-e^{-x}\sum_{j=0}^{r-1}\frac{x^j}{j!}.
+\]
+
+\begin{lemma}\label{lem:gamma-concavity}
+For every $r\geq1$, $G_r$ is strictly increasing and $\log G_r$ is strictly concave on $(0,\infty)$.
+\end{lemma}
+
+\begin{proof}
+Let $g(x)=G_r'(x)=x^{r-1}e^{-x}/(r-1)!$ and
+$h(x)=g'(x)/g(x)=(r-1)/x-1$. Clearly $g>0$. We have
+\[
+ (\log G_r)''(x)
+ =\frac{g(x)}{G_r(x)^2}\bigl(h(x)G_r(x)-g(x)\bigr).
+\]
+When $h(x)\leq0$ the bracket is negative. When $h(x)>0$, the concavity of $\log g$ implies, for $0<u\leq x$,
+$g(u)\leq g(x)e^{h(x)(u-x)}$. Hence
+\[
+ G_r(x)\leq g(x)\frac{1-e^{-h(x)x}}{h(x)}<\frac{g(x)}{h(x)},
+\]
+which again makes the bracket negative.
+\end{proof}
+
+\begin{theorem}[Repeated collection]\label{thm:multiplicity}
+Let $q=n/s$, possibly nonintegral. For every $r\geq1$,
+\begin{equation}\label{eq:multi-cdf}
+ \Pp(\tau_\mu^{(r)}\leq t)
+ \leq\prod_{i=1}^nG_r(tp_i)^{1/s}
+ \leq G_r(t/q)^q.
+\end{equation}
+If $q$ is an integer, the partition law attains the bound for every $t$ and uniquely minimizes $\E T_\mu^{(r)}$. Its minimum is
+\begin{equation}\label{eq:multi-mean}
+ q\int_0^\infty\bigl[1-G_r(u)^q\bigr]du.
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+If a marginal vanishes, the bound is immediate. Otherwise the event that coupon $i$ has appeared at least $r$ times depends only on its incident package counts and has probability $G_r(tp_i)$. Finner's inequality and Lemma~\ref{lem:gamma-concavity}, followed by \eqref{eq:budget}, prove \eqref{eq:multi-cdf}. Under the partition law, the $q$ block counts are independent $\Poi(t/q)$ variables, so the bound is attained. Equation~\eqref{eq:mean-poissonization} applies without change and gives \eqref{eq:multi-mean}.
+
+For uniqueness, equality of the means implies equality of the continuous CDFs. Strict concavity again forces \eqref{eq:equality-balance}. Use the same incidence classes as in Section~\ref{subsec:equality}. For one class the failure probability is
+\[
+ 1-G_r(pt)\sim e^{-pt}\frac{(pt)^{r-1}}{(r-1)!}.
+\]
+For two distinct classes, simultaneous failure implies that at most $2r-2$ packages meeting their union have arrived. The rate of those arrivals is $r_{ab}>p$, so their joint failure probability is at most
+\[
+ \Pp(\Poi(r_{ab}t)\leq2r-2)
+ =O(t^{2r-2}e^{-r_{ab}t})
+ =o(t^{r-1}e^{-pt}).
+\]
+Bonferroni therefore gives leading tail coefficient $k$, whereas
+$1-G_r(pt)^q\sim q(1-G_r(pt))$ gives coefficient $q$. Thus $k=q$, and the class-size argument again identifies the partition law.
+\end{proof}
+
+This result concerns a common quota $r$. It makes no claim about heterogeneous coupon quotas, or about the effect of the perturbations below on repeated-collection times.
+
+\section{Paired perturbations in discrete time}\label{sec:paired}
+
+We now restrict to packages of exactly $s$, with $1\leq s\leq n-1$, and set $N=\binom ns$. We use the conventions $\binom ab=0$ for integers $a\geq0$ and $b\notin\{0,\ldots,a\}$, and $0^0=1$ in finite counting formulas.
+
+\subsection{The parity theorem}
+
+Choose an integer $1\leq d\leq\min(s,n-s)$ and $d$ disjoint ordered pairs, labeled
+$(1,2),(3,4),\ldots,(2d-1,2d)$. Define
+\begin{equation}\label{eq:paired-law}
+ \chi_d(A)=\prod_{j=1}^d(x_{2j-1}(A)-x_{2j}(A)),
+ \qquad
+ \mu_{d,\theta}(A)=\frac{1+\theta\chi_d(A)}{N},
+ \quad |\theta|\leq1.
+\end{equation}
+Write $F_{d,\theta}(m)=\Pp(T_{\mu_{d,\theta}}\leq m)$ and
+$F_0(m)=\Pp(T_{\U_{n,s}}\leq m)$. Put $M=n-2d$.
+
+\begin{theorem}[Paired-perturbation parity]\label{thm:parity}
+The law \eqref{eq:paired-law} is a probability law. For every $B\subseteq[n]$ with $|B|<d$,
+\begin{equation}\label{eq:low-moments}
+ \Pp_{\mu_{d,\theta}}(B\subseteq S)
+ =\Pp_{\U_{n,s}}(B\subseteq S).
+\end{equation}
+For $m\geq0$,
+\begin{equation}\label{eq:parity-expansion}
+ F_{d,\theta}(m)-F_0(m)
+ =\frac{(-1)^d2^d}{N^m}
+   \sum_{\ell=1}^{\lfloor m/2\rfloor}
+     \binom m{2\ell}\theta^{2\ell}K^{(d)}_{m,\ell},
+\end{equation}
+where
+\begin{equation}\label{eq:K}
+ K^{(d)}_{m,\ell}
+ =\sum_{r=0}^{M}(-1)^r\binom Mr
+   \binom{M-r}{s-d}^{2\ell}
+   \binom{M-r+d}{s}^{m-2\ell}
+ \geq0.
+\end{equation}
+Moreover, $K^{(d)}_{m,1}>0$ whenever $ms\geq n$. Thus, for $0<|\theta|\leq1$,
+\begin{equation}\label{eq:strict-parity}
+ (-1)^d\bigl(F_{d,\theta}(m)-F_0(m)\bigr)>0
+ \qquad(m\geq\lceil n/s\rceil).
+\end{equation}
+In particular, even $d$ stochastically decreases completion time and odd $d$ stochastically increases it. In either case the completion distribution changes strictly.
+\end{theorem}
+
+\subsection{Normalization and preserved marginals}
+
+\begin{proof}[Proof of normalization and \eqref{eq:low-moments}]
+Since $\chi_d\in\{-1,0,1\}$, all masses are nonnegative. Swapping the labels in any chosen pair negates $\chi_d$ and permutes the $s$-sets. Thus $\sum_{|A|=s}\chi_d(A)=0$, proving normalization.
+
+If $|B|<d$, at least one chosen pair is disjoint from $B$. Swapping that pair preserves the condition $B\subseteq A$ and reverses $\chi_d(A)$, so
+$\sum_{A\supseteq B,\,|A|=s}\chi_d(A)=0$. This proves \eqref{eq:low-moments}. In fact, inclusion--exclusion within $B$ shows that the full membership law on any fewer than $d$ coupon labels is unchanged.
+\end{proof}
+
+\subsection{Inclusion--exclusion and the exact expansion}
+
+For any package law $\nu$, let
+\[
+ a_\nu(R)=\Pp_\nu(S\cap R=\varnothing).
+\]
+Inclusion--exclusion over the coupons still missing after $m$ draws gives
+\begin{equation}\label{eq:IE}
+ \Pp(T_\nu\leq m)=\sum_{R\subseteq[n]}(-1)^{|R|}a_\nu(R)^m.
+\end{equation}
+If all coupons have positive inclusion probability, summing the complementary tails also gives
+\begin{equation}\label{eq:mean-IE}
+ \E T_\nu=\sum_{\varnothing\ne R\subseteq[n]}
+       \frac{(-1)^{|R|+1}}{1-a_\nu(R)}.
+\end{equation}
+
+\begin{proof}[Proof of \eqref{eq:parity-expansion}]
+Let $V=[n]\setminus[2d]$, so $|V|=M$. The change
+$a_{\mu_{d,\theta}}(R)-a_{\U_{n,s}}(R)$ vanishes unless $R$ contains exactly one label of each chosen pair. Indeed, if neither label is in $R$, swapping that pair cancels the signed sum; if both labels are in $R$, every package avoiding $R$ has $\chi_d=0$.
+
+It remains to consider $R=B\cup J$, where $B\subseteq V$ and $J$ chooses one label of each pair. Put $r=|B|$, and abbreviate
+\[
+ b_r=\binom{M-r+d}{s},\qquad c_r=\binom{M-r}{s-d}.
+\]
+There are $b_r$ packages avoiding $R$. A nonzero signed contribution must contain all $d$ distinguished labels outside $R$, and choose its other $s-d$ coupons from $V\setminus B$. Hence
+\[
+ a_{\mu_{d,\theta}}(R)=\frac{b_r+\theta\sigma_Jc_r}{N},
+ \qquad \sigma_J\in\{-1,1\}.
+\]
+Exactly $2^{d-1}$ choices of $J$ have each sign, and $(-1)^{|R|}=(-1)^{r+d}$. For fixed $B$, the change in \eqref{eq:IE} is therefore
+\[
+ \frac{(-1)^{r+d}2^{d-1}}{N^m}
+ \bigl[(b_r+\theta c_r)^m+(b_r-\theta c_r)^m-2b_r^m\bigr].
+\]
+Expanding the even powers of $\theta$ and summing over $B\subseteq V$ proves \eqref{eq:parity-expansion} and the formula for $K^{(d)}_{m,\ell}$.
+\end{proof}
+
+\subsection{Why every coefficient is nonnegative}
+
+\begin{proof}[Proof of nonnegativity and strictness]
+Fix an auxiliary set $D$ of $d$ points disjoint from $V$. Consider ordered families
+\[
+ (C_1,\ldots,C_{2\ell};B_1,\ldots,B_{m-2\ell})
+\]
+with $C_j\subseteq V$, $|C_j|=s-d$, and $B_j\subseteq V\cup D$, $|B_j|=s$. Repetitions between different sets are permitted. Count those families whose union contains $V$; no coverage condition is imposed on $D$.
+
+If a specified $r$-subset of $V$ is forbidden, the number of such families before imposing coverage is
+\[
+ \binom{M-r}{s-d}^{2\ell}\binom{M-r+d}{s}^{m-2\ell}.
+\]
+Inclusion--exclusion over uncovered points of $V$ shows that their covering count is precisely $K^{(d)}_{m,\ell}$. This proves nonnegativity.
+
+For strictness use $\ell=1$. The two $C$-sets can each cover $s-d$ points of $V$, while each of the $m-2$ remaining sets can cover $\min(s,M)$ points. These cardinalities are feasible since $s-d\leq M$ and $s\leq M+d$. Such sets can cover $V$ whenever their total available capacity is at least $M$: assign uncovered points successively and fill any remaining positions with previously assigned points.
+
+If $s\leq M$, the total capacity is
+\[
+ 2(s-d)+(m-2)s=ms-2d\geq n-2d=M.
+\]
+If $s>M$ and $m\geq3$, one of the $B$-sets can already contain all of $V$. If $m=2$, the same assumption $ms\geq n$ gives $2(s-d)\geq M$. The case $M=0$ has one choice for the two $C$-sets and imposes no coverage requirement. Thus $K^{(d)}_{m,1}>0$ whenever $ms\geq n$.
+
+All coefficients in \eqref{eq:parity-expansion} now have the asserted sign, and the $\ell=1$ term is strictly positive at every feasible $m$. Before $\lceil n/s\rceil$ draws, no sequence of $s$-sets can cover $[n]$. This proves \eqref{eq:strict-parity} and completes the theorem.
+\end{proof}
+
+\begin{corollary}[Strict monotonicity along a paired ray]\label{cor:ray}
+The completion distribution under $\mu_{d,\theta}$ depends only on $|\theta|$. For $0\leq a<b\leq1$,
+\[
+ \begin{cases}
+ T_{\mu_{d,b}}\st T_{\mu_{d,a}},&d\ \text{even},\\
+ T_{\mu_{d,a}}\st T_{\mu_{d,b}},&d\ \text{odd}.
+ \end{cases}
+\]
+Every CDF comparison is strict at every $m\geq\lceil n/s\rceil$. Thus the fastest members of the even-$d$ family occur at $\theta=\pm1$; for odd $d$, the fastest member is $\theta=0$ and the endpoints are the slowest.
+\end{corollary}
+
+\begin{proof}
+Equation~\eqref{eq:parity-expansion} is a polynomial in $\theta^2$ whose coefficients have one common sign, and its coefficient of $\theta^2$ is strictly nonzero at every feasible draw count. Comparing $b^{2\ell}$ and $a^{2\ell}$ proves the assertion. Swapping the labels in one pair also gives a direct symmetry between $\theta$ and $-\theta$.
+\end{proof}
+
+The stochastic comparisons include extended-valued completion times. For example, when $d=s=1$ an endpoint can make a coupon impossible to collect. No such degeneracy occurs for $d\geq2$, since singleton marginals are preserved.
+
+\section{Schilling's conjecture and the uniform-law classification}\label{sec:schilling}
+
+\subsection{The four-coupon specialization}
+
+\begin{proof}[Proof of Theorem~\ref{thm:main-schilling}]
+Take $d=2$ in Theorem~\ref{thm:parity}. Its admissibility condition is exactly $2\leq s\leq n-2$. Equation~\eqref{eq:low-moments} preserves the singleton marginals, and \eqref{eq:strict-parity} proves the strict fixed-draw comparison. Because every marginal equals $s/n>0$, the expectations are finite, even at $|\theta|=1$. Summing the strictly improved tails gives the strict mean comparison.
+\end{proof}
+
+In particular, with $M=n-4$, the coefficient used in the four-coupon proof is
+\[
+ K_{m,\ell}^{(2)}=\sum_{r=0}^{n-4}(-1)^r\binom{n-4}{r}
+ \binom{n-4-r}{s-2}^{2\ell}\binom{n-2-r}{s}^{m-2\ell}.
+\]
+The improvement is not produced by increasing any single-coupon arrival rate. For example, if $D_m$ is the number of distinct coupons seen after $m$ draws, then under every $\mu_{2,\theta}$,
+\begin{equation}\label{eq:discovery-mean}
+ \E D_m=n\bigl[1-(1-s/n)^m\bigr],
+\end{equation}
+exactly as under $\U_{n,s}$. The gain is in joint coverage. More generally, every even $d$ supplies an improvement preserving all inclusion probabilities of orders $0,\ldots,d-1$.
+
+Poisson mixing of the strict fixed-draw comparison also gives
+\[
+ \Pp(\tau_{\mu_{2,\theta}}\leq t)>
+ \Pp(\tau_{\U_{n,s}}\leq t)\qquad(t>0,\ \theta\ne0).
+\]
+Unlike a general de-Poissonization argument, this implication goes in the valid direction: a coefficientwise inequality is preserved by positive mixing.
+
+\subsection{The endpoint and the full classification}
+
+\begin{proposition}[Packages missing one coupon]\label{prop:endpoint}
+For $n\geq2$, the uniform law on all $(n-1)$-sets is stochastically optimal and uniquely minimizes the mean among all iid laws on sets of size \emph{at most} $n-1$. Its mean is $1+n/(n-1)$.
+\end{proposition}
+
+\begin{proof}
+Apply Theorem~\ref{thm:geometric} with $h=n-s=1$. The only partition into singleton complements consists of all $n$ singletons, so the optimizing package law is exactly $\U_{n,n-1}$. The equality proof there rules out smaller packages.
+\end{proof}
+
+\begin{corollary}[Uniform-law classification]\label{cor:uniform-classification}
+For $n\geq2$ and $1\leq s\leq n-1$, the uniform law $\U_{n,s}$ minimizes the mean over iid laws on sets of size at most $s$ if and only if
+\[
+ s\in\{1,n-1\}.
+\]
+In the two optimal cases it is the unique minimizing law.
+\end{corollary}
+
+\begin{proof}
+For $s=1$, use Theorem~\ref{thm:main-partition}; for $s=n-1$, use Proposition~\ref{prop:endpoint}. For $2\leq s\leq n-2$, Theorem~\ref{thm:main-schilling} gives a strictly better law even within the exact-size class.
+\end{proof}
+
+The exact-size endpoint was established by Schilling \cite{Schilling}, and Berend and Sher proved the expectation classification for $2\leq s\leq n-1$ \cite{BerendSher}. Our contribution here is an alternative proof with a strict fixed-draw improvement, together with the explicit extension of the optimal cases to the at-most-size comparison class.
+
+\subsection{An explicit example}
+
+\begin{example}[Four coupons drawn in pairs]\label{ex:four}
+For $n=4$, $s=2$, and $d=2$, the masses of $\{1,3\}$ and $\{2,4\}$ are $(1+\theta)/6$, those of $\{1,4\}$ and $\{2,3\}$ are $(1-\theta)/6$, and the remaining two masses are $1/6$. Direct substitution into \eqref{eq:mean-IE} gives
+\[
+ \E T_{\mu_{2,\theta}}
+ =\frac{19}{5}-\frac{24\theta^2}{5(25-\theta^2)}.
+\]
+In particular, the uniform mean is $19/5$, the value at $\theta=1/2$ is $619/165$, and the endpoint perturbation has mean $18/5$. The partition optimum is $2H_2=3$. Thus the perturbation is an explicit improvement, not a claim to produce a global optimizer.
+\end{example}
+
+\section{The complete Hessian signature at the uniform law}\label{sec:hessian}
+
+\subsection{The Johnson decomposition and the paired directions}
+
+In this section packages have exactly $s$, where $1\leq s\leq n-1$, and $N=\binom ns$. Identify package-mass vectors with $\mathbb R^{\binom{[n]}s}$ and use the Euclidean inner product
+\[
+ \langle f,g\rangle=\sum_{|A|=s}f(A)g(A).
+\]
+Let $r_* =\min(s,n-s)$. Write $\mathcal W_d$ for restrictions to the $s$-slice of multilinear polynomials of degree at most $d$, and put
+\[
+ V_0=\mathcal W_0,\qquad
+ V_d=\mathcal W_d\cap\mathcal W_{d-1}^{\perp}\quad(1\leq d\leq r_*).
+\]
+The standard Johnson-scheme decomposition is
+\begin{equation}\label{eq:johnson}
+ \mathbb R^{\binom{[n]}s}=\bigoplus_{d=0}^{r_*}V_d,
+ \qquad
+ \dim V_d=\binom nd-\binom n{d-1},
+\end{equation}
+with $\binom n{-1}=0$. Every permutation-invariant symmetric matrix indexed by $s$-sets acts as a scalar on each $V_d$. Equivalently, these are the pairwise nonisomorphic irreducible modules $S^{(n-d,d)}$ in the multiplicity-free permutation representation. We use the formulation and harmonic basis in Filmus \cite[Lemma~2, Theorem~15, and Lemma~18]{Filmus}. For $s>n/2$, take complements to transfer the decomposition from the $(n-s)$-slice. The simplex tangent space is $\bigoplus_{d=1}^{r_*}V_d$.
+
+\begin{lemma}\label{lem:chi-eigenspace}
+The paired function $\chi_d$ belongs to $V_d$ and
+\begin{equation}\label{eq:chi-norm}
+ \|\chi_d\|^2=2^d L_d,
+ \qquad L_d:=\binom{n-2d}{s-d}>0.
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+It has degree $d$. The sign-reversing argument proving \eqref{eq:low-moments} makes it orthogonal to every monomial of degree less than $d$, hence to $\mathcal W_{d-1}$. It is nonzero exactly on the packages selecting one label of each pair and $s-d$ residual labels. There are $2^dL_d$ such packages, and its square is one on each.
+\end{proof}
+
+\subsection{Expected completion time}
+
+Write $u=\U_{n,s}$ and $\mathcal E(\mu)=\E T_\mu$. Near $u$, every nonempty coupon set has positive hitting probability, so \eqref{eq:mean-IE} defines an analytic function. Its permutation-invariant analytic extension to an ambient neighborhood may be used to compute derivatives. The resulting quadratic form on the simplex tangent space is intrinsic. By symmetry, both $\mathcal E$ and every fixed-draw CDF are stationary at $u$ on that tangent space.
+
+\begin{lemma}[Directional curvature]\label{lem:curvature}
+For every $1\leq d\leq r_*$,
+\begin{equation}\label{eq:curvature}
+ \left.\frac{d^2}{d\theta^2}\mathcal E(\mu_{d,\theta})\right|_{\theta=0}
+ =(-1)^{d+1}2^{d+1}
+ \sum_{m=2}^{\infty}\binom m2\frac{K^{(d)}_{m,1}}{N^m}.
+\end{equation}
+The series on the right is absolutely convergent and strictly positive before multiplication by its displayed sign and prefactor.
+\end{lemma}
+
+\begin{proof}
+Differentiate the finite formula \eqref{eq:mean-IE}. Only omitted sets selecting one label of each pair contribute. With $M=n-2d$, $b_j=\binom{M-j+d}s$ and $c_j=\binom{M-j}{s-d}$, the result is
+\[
+ \frac{(-1)^{d+1}2^{d+1}}{N^2}
+ \sum_{j=0}^{M}(-1)^j\binom Mj
+ \frac{c_j^2}{(1-b_j/N)^3}.
+\]
+Expand $(1-z)^{-3}=\sum_{m=2}^{\infty}\binom m2z^{m-2}$ and use \eqref{eq:K}. This gives \eqref{eq:curvature}, without differentiating an infinite series. Absolute convergence also follows from the counting bound
+\[
+ K^{(d)}_{m,1}\leq L_d^2\binom{n-d}{s}^{m-2},
+ \qquad \binom{n-d}{s}<N.
+\]
+Strict positivity follows from $K^{(d)}_{m,1}>0$ for every feasible $m$.
+\end{proof}
+
+\begin{theorem}[Full expectation-Hessian signature]\label{thm:hessian}
+The Hessian of $\mathcal E$ at $u$, restricted to the simplex tangent space, acts on $V_d$ as the nonzero scalar
+\begin{equation}\label{eq:hessian-eigenvalue}
+ \lambda_d=(-1)^{d+1}\frac{2N^2}{L_d}
+ \sum_{m=2}^{\infty}\binom m2\frac{K^{(d)}_{m,1}}{N^m},
+ \qquad 1\leq d\leq r_*.
+\end{equation}
+In particular, $\operatorname{sgn}\lambda_d=(-1)^{d+1}$. Its negative and positive indices are respectively
+\begin{align}
+ \operatorname{ind}_{-}D^2\mathcal E(u)
+ &=\sum_{\substack{1\leq d\leq r_*\\d\text{ even}}}
+       \left(\binom nd-\binom n{d-1}\right),\label{eq:negative-index}\\
+ \operatorname{ind}_{+}D^2\mathcal E(u)
+ &=\sum_{\substack{1\leq d\leq r_*\\d\text{ odd}}}
+       \left(\binom nd-\binom n{d-1}\right).\label{eq:positive-index}
+\end{align}
+There are no null directions. The uniform law is a nondegenerate saddle whenever $2\leq s\leq n-2$.
+\end{theorem}
+
+\begin{proof}
+The Hessian is invariant under simultaneous permutation of the package indices, hence acts as a scalar on each $V_d$ by \eqref{eq:johnson}. The curve $\mu_{d,\theta}=u+\theta\chi_d/N$ has tangent $\chi_d/N$, so its second derivative is
+$\lambda_d\|\chi_d\|^2/N^2$.
+Combine Lemmas~\ref{lem:chi-eigenspace} and \ref{lem:curvature}. The multiplicities in \eqref{eq:johnson} give the indices. For the intermediate package sizes, both $V_1$ and $V_2$ occur.
+\end{proof}
+
+An equivalent finite formula, useful for exact computation, is
+\begin{equation}\label{eq:hessian-finite}
+ \lambda_d=(-1)^{d+1}\frac{2N^3}{L_d}
+ \sum_{j=0}^{M}(-1)^j\binom Mj
+ \frac{\binom{M-j}{s-d}^{2}}
+      {\left(N-\binom{M-j+d}s\right)^3},
+ \qquad M=n-2d.
+\end{equation}
+The series formula, rather than this alternating finite sum, makes the sign manifest. For $(n,s)=(8,4)$ the four eigenvalues, in increasing degree, are approximately
+\[
+ (224.190729,\ -11.839806,\ 2.907681,\ -2.088223),
+\]
+with multiplicities $(7,20,28,14)$. These values use the Euclidean package-mass normalization specified above.
+
+Schilling proposed studying the Hessian to rule out a local optimum, and Berend and Sher discuss that approach \cite{Schilling,BerendSher}. Theorem~\ref{thm:hessian} implements it for every package size and identifies every tangent-space sign, rather than only exhibiting two opposite-curvature directions.
+
+\subsection{Fixed-draw CDF curvature}
+
+\begin{theorem}[Fixed-draw Hessian]\label{thm:cdf-hessian}
+For $m\geq\lceil n/s\rceil$, let $F_m(\mu)=\Pp(T_\mu\leq m)$. The Hessian of $F_m$ at $u$ acts on $V_d$ as
+\begin{equation}\label{eq:cdf-eigenvalue}
+ \gamma_{d,m}=(-1)^d\frac{m(m-1)K^{(d)}_{m,1}}{N^{m-2}L_d}.
+\end{equation}
+It is positive definite on $V_{\rm even}=\bigoplus_{2\leq d\leq r_*,\ d\ {\rm even}}V_d$ and negative definite on $V_{\rm odd}=\bigoplus_{1\leq d\leq r_*,\ d\ {\rm odd}}V_d$. Below the feasible draw threshold, $F_m$ is identically zero on the probability simplex.
+\end{theorem}
+
+\begin{proof}
+The polynomial formula \eqref{eq:IE} is permutation invariant. The Johnson decomposition therefore applies. The coefficient of $\theta^2$ in \eqref{eq:parity-expansion} gives
+\[
+ \left.\frac{d^2}{d\theta^2}F_m(\mu_{d,\theta})\right|_{\theta=0}
+ =(-1)^d2^d m(m-1)\frac{K^{(d)}_{m,1}}{N^m}.
+\]
+Divide by $\|\chi_d/N\|^2=2^dL_d/N^2$ and use the strict coefficient theorem.
+\end{proof}
+
+For a fixed feasible $m$ and any nonzero $v\in V_{\rm even}$,
+\[
+ F_m(u+\varepsilon v)-F_m(u)
+ =\tfrac12\varepsilon^2\langle v,D^2F_m(u)v\rangle+O(\varepsilon^3)>0
+\]
+for sufficiently small nonzero $\varepsilon$. The permitted size can depend on $m$ and $v$. This local statement does not by itself supply one amplitude valid for all draw counts, or finite-amplitude stochastic monotonicity along arbitrary sums of even-degree directions. Corollary~\ref{cor:ray} supplies that stronger conclusion only along the explicit paired rays.
+
+\section{Scope and the remaining fixed-draw question}\label{sec:scope}
+
+The divisible mean optimum, its uniqueness, its common-multiplicity extension, and the complementary-divisible discrete optimum are established for fixed iid package laws. Adaptation or history-dependent choice of packages is outside this model. Poissonized order also gives the transform and rising-factorial comparisons of Corollary~\ref{cor:transforms}, not a variance-minimization statement.
+
+\begin{conjecture}[Fixed-draw partition comparison]\label{conj:fixed-draw}
+Let $n=qs$ with $q,s\geq1$ integers. For every iid law on sets of size at most $s$ and every integer $m\geq0$,
+\begin{equation}\label{eq:fixed-conjecture}
+ \Pp(T_\mu\leq m)
+ \leq\Pp(T_{\D_{n,s}}\leq m)
+ =\frac{q!\,\genfrac{\{}{\}}{0pt}{}{m}{q}}{q^m},
+\end{equation}
+where $\genfrac{\{}{\}}{0pt}{}{m}{q}$ is a Stirling number of the second kind.
+\end{conjecture}
+
+The displayed right side counts surjections from $m$ draws to the $q$ blocks. The case $q=1$ is immediate. The case $q=2$ was proved by Fang and Chang \cite[Theorem~2]{FangChang} and is recovered in Corollary~\ref{cor:complement}. Proposition~\ref{prop:first-draw} proves the first feasible draw count $m=q$ for all $q$; earlier counts are zero. The general comparison for $q\geq3$ and $m>q$ is not proved here. In particular, the earliest-coefficient argument must not be applied to later coefficients of the Poissonized CDF.
+
+For nondivisible $n/s$, Theorem~\ref{thm:universal} gives a strict $q\hreal(q)$ bound, but does not by itself identify the optimizer. The additional bound $1+q$ does identify it when $n-s\mid n$. The remaining nondivisible cases are not classified. Replacing either bound by $\lceil q\rceil H_{\lceil q\rceil}$ is false, as Appendix~\ref{app:cover} shows.
+
+The signed perturbations establish finite-amplitude stochastic monotonicity only for their explicit one-parameter families. The full Hessian theorem gives local curvature in all Johnson components, not arbitrary global radial monotonicity. Neither argument here gives a corresponding signed-perturbation theorem for repeated collections or heterogeneous coupon quotas. Corollary~\ref{cor:GY} resolves only the lower-bound conjecture of \cite{GrunbaumYaakobi}; no assertion about that paper's separate upper-bound and hypergraph-inclusion conjectures is needed.
+
+\appendix
+\section{A minimum-cover comparison that fails}\label{app:cover}
+
+A tempting reduction would replace an arbitrary package family by a minimum-cardinality covering subfamily and then apply the classical coupon bound. The following example shows why that reduction is invalid in the general iid package model.
+
+Let $\mathcal A$ be a family of nonempty subsets of $[n]$ whose union is $[n]$, let $\mu$ be a probability distribution on $\mathcal A$, and choose a minimum-cardinality covering subfamily $\mathcal B\subseteq\mathcal A$. Consider the proposed comparison
+\begin{equation}\label{eq:false-cover}
+ \E_\mu T\ \geq\ \E_{\mathrm{unif}(\mathcal B)}T
+ =|\mathcal B|H_{|\mathcal B|}.
+\end{equation}
+The equality on the right holds because every member of a minimum cover contains a coupon not covered by the other members. The inequality on the left need not hold.
+
+Take $n=3$ and
+\[
+ \mathcal A=\bigl\{\{1,2\},\{1,3\},\{2,3\}\bigr\},
+ \qquad \mu(A)=1/3\quad(A\in\mathcal A).
+\]
+After the first draw, the waiting time for a different package is geometric with success probability $2/3$, so
+\[
+ \E_\mu T=1+\frac1{2/3}=\frac52.
+\]
+Every minimum covering subfamily has two pairs. Under its uniform law both pairs must appear, giving mean $2H_2=3$. Thus $5/2<3$ contradicts \eqref{eq:false-cover}. The same example disproves a universal bound $\lceil n/s\rceil H_{\lceil n/s\rceil}$.
+
+Conditioning on a covering subfamily being the first to complete changes the distribution and does not justify applying an unconditional coupon-collector lower bound. In this example, symmetry makes the conditional completion mean $5/2$ for each of the three possible first-completed two-package covers, not $3$.
+
+The valid bounded-package lower bound of Corollary~\ref{cor:GY} still gives $\Omega(n\log n)$ when the package-size bound is fixed.
+
+\section{Reproducible verification}\label{app:verification}
+
+The companion standard-library script \texttt{verify\_results.py} compares an independent union-state dynamic program with \eqref{eq:parity-expansion}. For $\theta=a/b$ it uses integer weights $b+a\chi_d(A)$, avoiding floating-point cancellation.
+
+The supplied run checks $2\leq n\leq9$, all admissible $s,d$, $0\leq m\leq8$, and $\theta\in\{1/2,-1/2,1\}$: 1,890 exact CDF comparisons across 210 laws and 939 inclusion-preservation identities. A coefficient grid through $n=35$ checks 40,835 nonnegativity and strictness assertions. The means $19/5$, $18/5$, $619/165$, and $5/2$ are verified exactly.
+
+The additional standard-library script \texttt{verify\_strengthenings.py} checks paired-ray monotonicity, the geometric bound against union-state calculations for laws allowing smaller and empty packages, complementary-partition attainment, and the first-feasible-draw inequality. It also independently constructs the expectation and CDF Hessian matrices from inclusion--exclusion and checks their action on the paired vectors against \eqref{eq:hessian-finite} and \eqref{eq:cdf-eigenvalue}, using rational arithmetic. The exact run ranges and counts are recorded in \texttt{audit/verification\_strengthenings.txt}.
+
+The supplementary script \texttt{verify\_partition\_bounds.py} checks the Poissonized bound using exact integers at times $t=nW\log b$, for integer package weights totaling $W$ and $b\in\{2,3\}$. Raising the inequalities to the integer power $s$ removes fractional exponents. A separate capped-count Markov recursion checks common-quota expectations, including empty and smaller packages and the $q=1$ boundary case. Logs are in the repository's \texttt{audit/} directory.
+
+All universal claims rest on the analytic and combinatorial proofs, not these finite checks. The manuscript has not been formally verified in a proof assistant or independently refereed.
+
+\begin{thebibliography}{9}
+\small
+\setlength{\itemsep}{2pt}
+
+\bibitem{BerendSher}
+D. Berend and T. Sher,
+\emph{On a conjecture on uniform group drawings in the coupon collector problem},
+Stochastic Models (2026), published online May 27, 2026.
+\href{https://doi.org/10.1080/15326349.2026.2671340}{doi:10.1080/15326349.2026.2671340}.
+Preprint: \href{https://arxiv.org/abs/2509.17201}{arXiv:2509.17201}; version 2, May 11, 2026.
+
+\bibitem{FangChang}
+C. Fang and E.-C. Chang,
+\emph{Optimal strategy of coupon subset collection when each package contains half of the coupons},
+Information Processing Letters \textbf{114} (2014), no.~12, 703--705.
+\href{https://doi.org/10.1016/j.ipl.2014.06.012}{doi:10.1016/j.ipl.2014.06.012}.
+
+\bibitem{Filmus}
+Y. Filmus,
+\emph{An orthogonal basis for functions over a slice of the Boolean hypercube},
+The Electronic Journal of Combinatorics \textbf{23} (2016), no.~1, paper P1.23, 27~pp.
+\href{https://doi.org/10.37236/4567}{doi:10.37236/4567}.
+
+\bibitem{Finner}
+H. Finner,
+\emph{A generalization of H\"older's inequality and some probability inequalities},
+The Annals of Probability \textbf{20} (1992), no.~4, 1893--1901.
+\href{https://doi.org/10.1214/aop/1176989534}{doi:10.1214/aop/1176989534}.
+
+\bibitem{GrunbaumYaakobi}
+Y. Grunbaum and E. Yaakobi,
+\emph{General coverage models: Structure, monotonicity, and shotgun sequencing},
+preprint, \href{https://arxiv.org/abs/2510.25305v1}{arXiv:2510.25305v1} (2025).
+The references here to Remark~2 and Conjecture~3 use this version.
+
+\bibitem{Schilling}
+J. Schilling,
+\emph{Results and conjectures on the role of the uniform distribution in the coupon collector's problem with group drawings},
+Information Processing Letters \textbf{169} (2021), article 106112.
+\href{https://doi.org/10.1016/j.ipl.2021.106112}{doi:10.1016/j.ipl.2021.106112}.
+
+\end{thebibliography}
+\end{document}

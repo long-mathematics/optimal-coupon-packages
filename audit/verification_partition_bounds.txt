@@ -1,0 +1,4 @@
+PASS: independent exact Poisson and common-quota checks
+  Poisson CDF/Finner/Jensen chains: 168; n=1..7, all 1<=s<=n
+  partition CDF attainment identities: 32
+  capped-count quota comparisons and partition identities: 33; r=1,2,3

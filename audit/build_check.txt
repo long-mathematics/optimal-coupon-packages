@@ -1,0 +1,6 @@
+Build date: 2026-11-17
+Engine: pdfTeX 1.40.26 (TeX Live 2025/dev/Debian)
+Builder: latexmk 4.86
+Output: paper/optimal_coupon_packages.pdf (17 pages)
+PASS: PDF compiled; no LaTeX/package warnings or overfull boxes
+Visual review: all 17 pages rendered and inspected; no clipping or overlap.

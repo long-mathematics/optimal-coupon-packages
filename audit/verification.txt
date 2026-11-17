@@ -1,0 +1,8 @@
+PASS: exact paired-switch dynamic-programming identities
+  n=2..9; m=0..8; all s and admissible d
+  210 perturbed laws; 1890 exact CDF comparisons
+  939 low-order inclusion-preservation checks
+  40835 coefficient nonnegativity / strictness checks
+  coefficient grid: n=2..35
+PASS: exact expectations 19/5, 18/5, 619/165, and 5/2; rational example formula
+Elapsed: 1.967 seconds
